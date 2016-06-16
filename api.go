@@ -7,8 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"math/rand"
 	"mime"
 	"net/http"
 	"os"
