@@ -1,0 +1,81 @@
+Gomf usage
+==========
+
+
+Requirements
+------------
+
+	- Go1.5 or newer: https://golang.org/dl/
+
+	- libmagic (on Debian/Ubuntu, `aptitude install libmagic-dev`)
+
+
+Installation
+------------
+
+	- `go get -u git.clsr.net/gomf`
+
+	- Go to a directory where you want to have the website files and `git clone https://git.clsr.net/gomf-web`
+
+
+Running
+-------
+
+	- Go to the directory with gomf-web
+
+	- Run `gomf`
+
+	Optional options for `gomf`:
+		--http HOST:PORT
+			serves HTTP on HOST:PORT
+			example: --http example.com:80
+
+		--https HOST:PORT
+			serves HTTPS on HOST:PORT
+			needs --cert and --key
+			example: --https example.com:443
+
+		--cert PATH
+			uses PATH as the TLS certificate for HTTPS
+			example: --cert ssl/cert.pem
+
+		--key PATH
+			uses PATH as the TLS certificate key for HTTPS
+			example: --key ssl/cert.key
+
+		--hsts
+			enables the HSTS header
+			example: --hsts
+
+		--name NAME
+			sets website name to NAME
+			example: --name Example
+
+		--max-size BYTES
+			sets BYTES as the upload file size limit in bytes
+			example (10 MiB): --bytes 10485760
+			equivalent bash example: --bytes $((1024 * 1024 * 10))
+
+		--forbid-ext EXTS
+			forbids file extensions contained in the comma-separated list EXTS
+			example: --forbid-ext exe,dll,src
+
+		--forbid-mime TYPES
+			forbids MIME types contained in the comma-separated list TYPES
+			example: --forbid-mime application/x-dosexec
+
+		--contact EMAIL
+			sets the contact email address to EMAIL
+			example: --contact contact@example.com
+
+		--abuse EMAIL
+			sets the abuse email address to EMAIL
+			example: --abuse abuse@example.com
+
+		--upload-host HOST
+			all request to HOST host will serve files directly ($host/$file, while other hosts serve them on $host/u/$file)
+			example: --upload-host u.example.com
+
+		--upload-url URL
+			uses URL as the prefix for address of uploaded files
+			example: --upload-url http://u.example.com/
