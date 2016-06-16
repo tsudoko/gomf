@@ -19,7 +19,6 @@ GET arguments:
 			Content-Type: text/plain
 			Complete URLs to uploaded files in the same order as input files. Each line ends in a newline (Unix style).
 			Example output: 'https://example.com/foobar.jpg\nhttps://example.com/qweasd.txt\n'
-			Protip: if you include input names of uploaded files, how do you handle e.g. newlines in filenames?
 
 		html:
 			Content-Type: text/html
