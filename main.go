@@ -45,6 +45,7 @@ func main() {
 	maxSize := flag.Int64("max-size", 50*1024*1024, "max filesize in bytes")
 	forbidMime := flag.String("forbid-mime", "application/x-dosexec,application/x-msdos-program", "comma-separated list of forbidden MIME types")
 	forbidExt := flag.String("forbid-ext", "exe,dll,msi,scr,com,pif", "comma-separated list of forbidden file extensions")
+	grill := flag.Bool("grill", false, "enable grills")
 	flag.Parse()
 
 	rand.Seed(time.Now().UnixNano())
@@ -54,8 +55,10 @@ func main() {
 	storage.ForbiddenMime = strings.Split(*forbidMime, ",")
 
 	http.HandleFunc("/upload.php", handleUpload)
-	http.HandleFunc("/grill.php", handleGrill)
 	http.Handle("/u/", http.StripPrefix("/u/", http.HandlerFunc(handleFile)))
+	if *grill {
+		http.HandleFunc("/grill.php", handleGrill)
+	}
 
 	initWebsite()
 

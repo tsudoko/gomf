@@ -79,3 +79,7 @@ Running
 		--upload-url URL
 			uses URL as the prefix for address of uploaded files
 			example: --upload-url http://u.example.com/
+
+		--grill
+			enables grills
+			example: --grill
