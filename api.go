@@ -71,8 +71,12 @@ type response struct {
 func handleUpload(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	output := r.FormValue("output")
-
 	resp := response{Files: []result{}}
+
+	if r.Method == "GET" && output == "html" {
+		respond(w, output, resp)
+		return
+	}
 
 	mr, err := r.MultipartReader()
 	if err != nil {
@@ -99,6 +103,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 		id, hash, size, err := storage.New(part, part.FileName())
 		if err != nil {
 			resp.ErrorCode = http.StatusInternalServerError
+			resp.Description = err.Error()
 			if _, ok := err.(ErrTooLarge); ok {
 				resp.ErrorCode = http.StatusRequestEntityTooLarge
 			} else if _, ok := err.(ErrForbidden); ok {
