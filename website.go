@@ -92,3 +92,12 @@ func handlePage(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(os.Stderr, err)
 	}
 }
+
+func handleGrill(w http.ResponseWriter, r *http.Request) {
+	grills, err := ioutil.ReadDir("static/grill/")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/static/grill/"+grills[rand.Intn(len(grills))].Name(), http.StatusFound)
+}

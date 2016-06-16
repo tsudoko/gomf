@@ -18,15 +18,6 @@ import (
 	"time"
 )
 
-func handleGrill(w http.ResponseWriter, r *http.Request) {
-	grills, err := ioutil.ReadDir("static/grill/")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	http.Redirect(w, r, "/static/grill/"+grills[rand.Intn(len(grills))].Name(), http.StatusFound)
-}
-
 func handleFile(w http.ResponseWriter, r *http.Request) {
 	f, hash, size, modtime, err := storage.Get(strings.TrimRight(r.URL.Path, "/"))
 	if err != nil {
