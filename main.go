@@ -17,7 +17,9 @@ var (
 	siteName    string
 	contactMail string
 	abuseMail   string
+	csp         string
 	hsts        bool
+	allowHtml   bool
 )
 
 func handle(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +39,9 @@ func main() {
 	flag.StringVar(&siteName, "name", "Gomf", "website name")
 	flag.StringVar(&contactMail, "contact", "contact@example.com", "contact email address")
 	flag.StringVar(&abuseMail, "abuse", "abuse@example.com", "abuse email address")
+	flag.StringVar(&csp, "csp", "default-src 'none'; media-src 'self'", "the Content-Security-Policy header for files; blank to disable")
 	flag.BoolVar(&hsts, "hsts", false, "enable HSTS")
+	flag.BoolVar(&allowHtml, "allow-html", false, "serve (X)HTML uploads with (X)HTML filetypes")
 	listenHttp := flag.String("http", "localhost:8080", "address to listen on for HTTP")
 	listenHttps := flag.String("https", "", "address to listen on for HTTPS")
 	cert := flag.String("cert", "", "path to TLS certificate (for HTTPS)")

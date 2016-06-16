@@ -89,6 +89,14 @@ Running
 			if missing, uses --upload-host, --https or --http to construct the URL
 			example: --upload-url http://u.example.com/
 
+		--csp CSP
+			sets the Content-Security-Header to CSP; blank to disable the header
+			example: --csp=
+
+		--allow-html
+			serve text/html and application/xhtml+xml files with their original filetype instead of text/plain
+			example: --allow-html
+
 		--grill
 			enables grills
 			example: --grill

@@ -28,13 +28,14 @@ func handleFile(w http.ResponseWriter, r *http.Request) {
 	}
 	defer f.Close()
 	mtype := mime.TypeByExtension(path.Ext(f.Name()))
-	if strings.Index(mtype, "text/html") == 0 || strings.Index(mtype, "application/xhtml+xml") == 0 {
+	if !allowHtml && (strings.Index(mtype, "text/html") == 0 || strings.Index(mtype, "application/xhtml+xml") == 0) {
 		mtype = "text/plain"
 	}
 	w.Header().Set("Content-Type", mtype)
 	_ = size
-	//w.Header().Set("Content-Length", strconv.FormatInt(size, 10))
-	w.Header().Set("Content-Security-Policy", "default-src 'none'; media-src 'self'")
+	if csp != "" {
+		w.Header().Set("Content-Security-Policy", csp)
+	}
 	w.Header().Set("Last-Modified", modtime.UTC().Format(http.TimeFormat))
 	w.Header().Set("Expires", modtime.UTC().Add(time.Hour*24*30).Format(http.TimeFormat))
 	w.Header().Set("Cache-Control", "max-age=2592000")
