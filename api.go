@@ -63,9 +63,9 @@ type result struct {
 
 type response struct {
 	Success     bool     `json:"success"`
-	ErrorCode   int      `json:"errorcode",omitempty`
-	Description string   `json:"description",omitempty`
-	Files       []result `json:"files",omitempty`
+	ErrorCode   int      `json:"errorcode,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Files       []result `json:"files,omitempty"`
 }
 
 func handleUpload(w http.ResponseWriter, r *http.Request) {
