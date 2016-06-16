@@ -14,7 +14,6 @@ import (
 var templates *template.Template
 
 func initWebsite() {
-	os.MkdirAll("pages", 0755)
 	pages, err := ioutil.ReadDir("pages")
 	if err != nil {
 		panic(err)

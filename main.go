@@ -53,6 +53,8 @@ func main() {
 
 	rand.Seed(time.Now().UnixNano())
 
+	initWebsite()
+
 	storage = NewStorage("upload", *maxSize)
 	storage.ForbiddenExt = strings.Split(*forbidExt, ",")
 	storage.ForbiddenMime = strings.Split(*forbidMime, ",")
@@ -66,8 +68,6 @@ func main() {
 	if *grill {
 		http.HandleFunc("/grill.php", handleGrill)
 	}
-
-	initWebsite()
 
 	if uploadUrl == "" {
 		if *listenHttps != "" {
