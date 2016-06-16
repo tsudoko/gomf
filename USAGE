@@ -66,7 +66,7 @@ Running
 
 		--forbid-ext EXTS
 			forbids file extensions contained in the comma-separated list EXTS
-			example: --forbid-ext exe,dll,src
+			example: --forbid-ext exe,dll,scr
 
 		--forbid-mime TYPES
 			forbids MIME types contained in the comma-separated list TYPES
@@ -86,6 +86,7 @@ Running
 
 		--upload-url URL
 			uses URL as the prefix for address of uploaded files
+			if missing, uses --upload-host, --https or --http to construct the URL
 			example: --upload-url http://u.example.com/
 
 		--grill
