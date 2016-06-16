@@ -46,6 +46,9 @@ func main() {
 	forbidMime := flag.String("forbid-mime", "application/x-dosexec,application/x-msdos-program", "comma-separated list of forbidden MIME types")
 	forbidExt := flag.String("forbid-ext", "exe,dll,msi,scr,com,pif", "comma-separated list of forbidden file extensions")
 	grill := flag.Bool("grill", false, "enable grills")
+	idLength := flag.Int("id-length", 6, "length of uploaded file IDs")
+	idCharset := flag.String("id-charset", "", "charset for uploaded file IDs (default lowercase letters a-z)")
+
 	flag.Parse()
 
 	rand.Seed(time.Now().UnixNano())
@@ -53,6 +56,10 @@ func main() {
 	storage = NewStorage("upload", *maxSize)
 	storage.ForbiddenExt = strings.Split(*forbidExt, ",")
 	storage.ForbiddenMime = strings.Split(*forbidMime, ",")
+	storage.IdLength = *idLength
+	if *idCharset != "" {
+		storage.IdCharset = *idCharset
+	}
 
 	http.HandleFunc("/upload.php", handleUpload)
 	http.Handle("/u/", http.StripPrefix("/u/", http.HandlerFunc(handleFile)))
