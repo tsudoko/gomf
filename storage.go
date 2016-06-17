@@ -72,7 +72,8 @@ func (s *Storage) Get(id string) (file *os.File, hash string, size int64, modtim
 	id = id[:len(id)-len(ext)]
 	for i := 0; i < len(id); i++ {
 		if !strings.ContainsRune(s.IdCharset, rune(id[i])) {
-			err = errors.New("invalid ID")
+			err = errors.New("invalid ID: " + id)
+			return
 		}
 	}
 	folder := s.idToFolder("ids", id)

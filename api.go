@@ -17,7 +17,7 @@ import (
 )
 
 func handleFile(w http.ResponseWriter, r *http.Request) {
-	f, hash, size, modtime, err := storage.Get(strings.TrimRight(r.URL.Path, "/"))
+	f, hash, size, modtime, err := storage.Get(strings.TrimLeft(r.URL.Path, "/"))
 	if err != nil {
 		if _, ok := err.(ErrNotFound); ok {
 			http.Error(w, err.Error(), http.StatusNotFound)
