@@ -12,42 +12,44 @@ import (
 var storage *Storage
 
 var (
-	uploadUrl   string
-	uploadHost  string
-	siteName    string
-	contactMail string
-	abuseMail   string
-	csp         string
-	hsts        bool
-	allowHtml   bool
-	cors        bool
+	uploadUrl     string
+	uploadHost    string
+	siteName      string
+	contactMail   string
+	abuseMail     string
+	csp           string
+	hsts          bool
+	allowHtml     bool
+	cors          bool
+	redirectHttps bool
 )
 
 func handle(w http.ResponseWriter, r *http.Request) {
+	if cors {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	if hsts {
 		w.Header().Set("Strict-Transport-Security", "max-age=15552000")
 	}
-	if uploadHost != "" && r.URL.Host == uploadHost {
-		handleFile(w, r)
-	} else {
-		http.DefaultServeMux.ServeHTTP(w, r)
+	if redirectHttps && r.TLS == nil {
+		targ := &*r.URL
+		targ.Host = r.Host
+		targ.Scheme = "https"
+		http.Redirect(w, r, targ.String(), http.StatusFound)
+		return
 	}
-}
-
-func globalHandler(handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if cors {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-		}
-		if r.Method == http.MethodGet || r.Method == http.MethodPost || r.Method == http.MethodHead {
-			handler.ServeHTTP(w, r)
+	if r.Method == http.MethodGet || r.Method == http.MethodPost || r.Method == http.MethodHead {
+		if uploadHost != "" && r.Host == uploadHost {
+			handleFile(w, r)
 		} else {
-			w.Header().Set("Allow", "POST, HEAD, OPTIONS, GET")
-			if r.Method != http.MethodOptions {
-				http.Error(w, "The method is not allowed for the requested URL.", http.StatusMethodNotAllowed)
-			}
+			http.DefaultServeMux.ServeHTTP(w, r)
 		}
-	})
+	} else {
+		w.Header().Set("Allow", "POST, HEAD, OPTIONS, GET")
+		if r.Method != http.MethodOptions {
+			http.Error(w, "The method is not allowed for the requested URL.", http.StatusMethodNotAllowed)
+		}
+	}
 }
 
 func main() {
@@ -60,6 +62,7 @@ func main() {
 	flag.BoolVar(&hsts, "hsts", false, "enable HSTS")
 	flag.BoolVar(&allowHtml, "allow-html", false, "serve (X)HTML uploads with (X)HTML filetypes")
 	flag.BoolVar(&cors, "cors", false, "enable CORS and allow all origins")
+	flag.BoolVar(&redirectHttps, "redirect-https", false, "redirect HTTP traffic to HTTPS")
 	listenHttp := flag.String("http", "localhost:8080", "address to listen on for HTTP")
 	listenHttps := flag.String("https", "", "address to listen on for HTTPS")
 	cert := flag.String("cert", "", "path to TLS certificate (for HTTPS)")
@@ -105,22 +108,26 @@ func main() {
 				uploadUrl = "http://" + *listenHttp + "/u/"
 			}
 		}
+		fmt.Printf("using %q as uploaded file URL\n", uploadUrl)
 	}
 
 	exit := true
 	if *listenHttp != "" {
 		exit = false
 		fmt.Printf("listening on http://%s/\n", *listenHttp)
-		go panic(http.ListenAndServe(*listenHttp, globalHandler(http.HandlerFunc(handle))))
+		go func() {
+			panic(http.ListenAndServe(*listenHttp, http.HandlerFunc(handle)))
+		}()
 	}
 	if *listenHttps != "" {
 		exit = false
 		fmt.Printf("listening on https://%s/\n", *listenHttps)
-		go panic(http.ListenAndServeTLS(*listenHttps, *cert, *key, globalHandler(http.HandlerFunc(handle))))
+		go func() {
+			panic(http.ListenAndServeTLS(*listenHttps, *cert, *key, http.HandlerFunc(handle)))
+		}()
 	}
 
 	if !exit {
-		switch {
-		}
+		select {}
 	}
 }

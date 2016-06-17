@@ -43,6 +43,10 @@ Running
 			uses PATH as the TLS certificate key for HTTPS
 			example: --key ssl/cert.key
 
+		--redirect-https
+			redirect HTTP request to HTTPS
+			example: --redirect-https
+
 		--hsts
 			enables the HSTS header
 			example: --hsts
