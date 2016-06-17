@@ -70,6 +70,7 @@ func main() {
 	maxSize := flag.Int64("max-size", 50*1024*1024, "max filesize in bytes")
 	filterMime := flag.String("filter-mime", "application/x-dosexec,application/x-msdos-program", "comma-separated list of filtered MIME types")
 	filterExt := flag.String("filter-ext", "exe,dll,msi,scr,com,pif", "comma-separated list of filtered file extensions")
+	whitelist := flag.Bool("whitelist", false, "use filter as a whitelist instead of blacklist")
 	grill := flag.Bool("grill", false, "enable grills")
 	idLength := flag.Int("id-length", 6, "length of uploaded file IDs")
 	idCharset := flag.String("id-charset", "", "charset for uploaded file IDs (default lowercase letters a-z)")
@@ -83,6 +84,7 @@ func main() {
 	storage = NewStorage("upload", *maxSize)
 	storage.FilterExt = strings.Split(*filterExt, ",")
 	storage.FilterMime = strings.Split(*filterMime, ",")
+	storage.Whitelist = *whitelist
 	storage.IdLength = *idLength
 	if *idCharset != "" {
 		storage.IdCharset = *idCharset

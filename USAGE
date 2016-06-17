@@ -33,15 +33,13 @@ Running
 		--https HOST:PORT
 			serves HTTPS on HOST:PORT
 			needs --cert and --key
-			example: --https example.com:443
+			example: --https example.com:443 --cert ssl/cert.pem --key ssl/cert.key
 
 		--cert PATH
 			uses PATH as the TLS certificate for HTTPS
-			example: --cert ssl/cert.pem
 
 		--key PATH
 			uses PATH as the TLS certificate key for HTTPS
-			example: --key ssl/cert.key
 
 		--redirect-https
 			redirect HTTP request to HTTPS
@@ -69,12 +67,19 @@ Running
 			equivalent bash example: --bytes $((1024 * 1024 * 10))
 
 		--filter-ext EXTS
-			forbids file extensions contained in the comma-separated list EXTS
+			filter file extensions contained in the comma-separated list EXTS
+			forbids extensions by default, unless --whitelist is in effect
 			example: --filter-ext exe,dll,scr
 
 		--filter-mime TYPES
-			forbids MIME types contained in the comma-separated list TYPES
+			filter MIME types contained in the comma-separated list TYPES
+			forbids types by default, unless --whitelist is in effect
 			example: --filters-mime application/x-dosexec
+
+		--whitelist
+			treat file extension and MIME type filters as whitelists instead of blacklists
+			forbids any upload whose type or extension is not on at least one of the filters
+			example: --whitelist --filter-ext png,jpg,gif --filter-mime=
 
 		--contact EMAIL
 			sets the contact email address to EMAIL
