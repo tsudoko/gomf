@@ -30,8 +30,8 @@ type Storage struct {
 	IdCharset     string
 	IdLength      int
 	MaxSize       int64
-	ForbiddenMime []string
-	ForbiddenExt  []string
+	FilterMime []string
+	FilterExt  []string
 }
 
 type ErrForbidden struct{ Type string }
@@ -201,17 +201,17 @@ func (s *Storage) getMimeExt(fpath string, name string) (mimetype, ext string, e
 		}
 	}
 
-	// reject forbidden MIME types and file extensions
+	// reject filtered MIME types and file extensions
 	if mimetype != "application/octet-stream" {
 		for _, e := range exts {
-			for _, fe := range s.ForbiddenExt {
+			for _, fe := range s.FilterExt {
 				if e == fe {
 					err = ErrForbidden{fe}
 					return
 				}
 			}
 		}
-		for _, fm := range s.ForbiddenMime {
+		for _, fm := range s.FilterMime {
 			if mimetype == fm {
 				err = ErrForbidden{fm}
 				return

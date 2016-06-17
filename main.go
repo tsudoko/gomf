@@ -68,8 +68,8 @@ func main() {
 	cert := flag.String("cert", "", "path to TLS certificate (for HTTPS)")
 	key := flag.String("key", "", "path to TLS key (for HTTPS)")
 	maxSize := flag.Int64("max-size", 50*1024*1024, "max filesize in bytes")
-	forbidMime := flag.String("forbid-mime", "application/x-dosexec,application/x-msdos-program", "comma-separated list of forbidden MIME types")
-	forbidExt := flag.String("forbid-ext", "exe,dll,msi,scr,com,pif", "comma-separated list of forbidden file extensions")
+	filterMime := flag.String("filter-mime", "application/x-dosexec,application/x-msdos-program", "comma-separated list of filtered MIME types")
+	filterExt := flag.String("filter-ext", "exe,dll,msi,scr,com,pif", "comma-separated list of filtered file extensions")
 	grill := flag.Bool("grill", false, "enable grills")
 	idLength := flag.Int("id-length", 6, "length of uploaded file IDs")
 	idCharset := flag.String("id-charset", "", "charset for uploaded file IDs (default lowercase letters a-z)")
@@ -81,8 +81,8 @@ func main() {
 	initWebsite()
 
 	storage = NewStorage("upload", *maxSize)
-	storage.ForbiddenExt = strings.Split(*forbidExt, ",")
-	storage.ForbiddenMime = strings.Split(*forbidMime, ",")
+	storage.FilterExt = strings.Split(*filterExt, ",")
+	storage.FilterMime = strings.Split(*filterMime, ",")
 	storage.IdLength = *idLength
 	if *idCharset != "" {
 		storage.IdCharset = *idCharset

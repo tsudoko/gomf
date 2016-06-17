@@ -68,13 +68,13 @@ Running
 			example (10 MiB): --bytes 10485760
 			equivalent bash example: --bytes $((1024 * 1024 * 10))
 
-		--forbid-ext EXTS
+		--filter-ext EXTS
 			forbids file extensions contained in the comma-separated list EXTS
-			example: --forbid-ext exe,dll,scr
+			example: --filter-ext exe,dll,scr
 
-		--forbid-mime TYPES
+		--filter-mime TYPES
 			forbids MIME types contained in the comma-separated list TYPES
-			example: --forbid-mime application/x-dosexec
+			example: --filters-mime application/x-dosexec
 
 		--contact EMAIL
 			sets the contact email address to EMAIL
