@@ -20,6 +20,7 @@ var (
 	csp         string
 	hsts        bool
 	allowHtml   bool
+	cors        bool
 )
 
 func handle(w http.ResponseWriter, r *http.Request) {
@@ -33,8 +34,11 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func methodHandler(handler http.Handler) http.Handler {
+func globalHandler(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if cors {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+		}
 		if r.Method == http.MethodGet || r.Method == http.MethodPost || r.Method == http.MethodHead {
 			handler.ServeHTTP(w, r)
 		} else {
@@ -55,6 +59,7 @@ func main() {
 	flag.StringVar(&csp, "csp", "default-src 'none'; media-src 'self'", "the Content-Security-Policy header for files; blank to disable")
 	flag.BoolVar(&hsts, "hsts", false, "enable HSTS")
 	flag.BoolVar(&allowHtml, "allow-html", false, "serve (X)HTML uploads with (X)HTML filetypes")
+	flag.BoolVar(&cors, "cors", false, "enable CORS and allow all origins")
 	listenHttp := flag.String("http", "localhost:8080", "address to listen on for HTTP")
 	listenHttps := flag.String("https", "", "address to listen on for HTTPS")
 	cert := flag.String("cert", "", "path to TLS certificate (for HTTPS)")
@@ -106,12 +111,12 @@ func main() {
 	if *listenHttp != "" {
 		exit = false
 		fmt.Printf("listening on http://%s/\n", *listenHttp)
-		go panic(http.ListenAndServe(*listenHttp, methodHandler(http.HandlerFunc(handle))))
+		go panic(http.ListenAndServe(*listenHttp, globalHandler(http.HandlerFunc(handle))))
 	}
 	if *listenHttps != "" {
 		exit = false
 		fmt.Printf("listening on https://%s/\n", *listenHttps)
-		go panic(http.ListenAndServeTLS(*listenHttps, *cert, *key, methodHandler(http.HandlerFunc(handle))))
+		go panic(http.ListenAndServeTLS(*listenHttps, *cert, *key, globalHandler(http.HandlerFunc(handle))))
 	}
 
 	if !exit {
