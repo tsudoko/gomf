@@ -33,6 +33,19 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func methodHandler(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet || r.Method == http.MethodPost || r.Method == http.MethodHead {
+			handler.ServeHTTP(w, r)
+		} else {
+			w.Header().Set("Allow", "POST, HEAD, OPTIONS, GET")
+			if r.Method != http.MethodOptions {
+				http.Error(w, "The method is not allowed for the requested URL.", http.StatusMethodNotAllowed)
+			}
+		}
+	})
+}
+
 func main() {
 	flag.StringVar(&uploadUrl, "upload-url", "", "URL to serve uploads from")
 	flag.StringVar(&uploadHost, "upload-host", "", "host to serve uploads on")
@@ -93,12 +106,12 @@ func main() {
 	if *listenHttp != "" {
 		exit = false
 		fmt.Printf("listening on http://%s/\n", *listenHttp)
-		go panic(http.ListenAndServe(*listenHttp, http.HandlerFunc(handle)))
+		go panic(http.ListenAndServe(*listenHttp, methodHandler(http.HandlerFunc(handle))))
 	}
 	if *listenHttps != "" {
 		exit = false
 		fmt.Printf("listening on https://%s/\n", *listenHttps)
-		go panic(http.ListenAndServeTLS(*listenHttps, *cert, *key, http.HandlerFunc(handle)))
+		go panic(http.ListenAndServeTLS(*listenHttps, *cert, *key, methodHandler(http.HandlerFunc(handle))))
 	}
 
 	if !exit {

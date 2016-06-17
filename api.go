@@ -63,7 +63,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	output := r.FormValue("output")
 	resp := response{Files: []result{}}
 
-	if r.Method == "GET" && output == "html" {
+	if r.Method == http.MethodGet && output == "html" {
 		respond(w, output, resp)
 		return
 	}
