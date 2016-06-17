@@ -97,6 +97,10 @@ Running
 			serve text/html and application/xhtml+xml files with their original filetype instead of text/plain
 			example: --allow-html
 
+		--cors
+			sets the Access-Control-Allow-Origin header to * to allow CORS from any origin
+			example: --cors
+
 		--grill
 			enables grills
 			example: --grill
