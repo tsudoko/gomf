@@ -138,10 +138,14 @@ func respond(w http.ResponseWriter, mode string, resp response) {
 
 	case "text", "gyazo":
 		w.Header().Set("Content-Type", "text/plain")
-		sep := ""
-		for _, file := range resp.Files {
-			io.WriteString(w, sep+file.Url)
-			sep = "\n"
+		if resp.ErrorCode == 0 {
+			sep := ""
+			for _, file := range resp.Files {
+				io.WriteString(w, sep+file.Url)
+				sep = "\n"
+			}
+		} else {
+			io.WriteString(w, "ERROR: ("+strconv.Itoa(resp.ErrorCode)+") "+resp.Description)
 		}
 		if mode != "gyazo" {
 			io.WriteString(w, "\n")
@@ -150,9 +154,14 @@ func respond(w http.ResponseWriter, mode string, resp response) {
 	case "csv":
 		w.Header().Set("Content-Type", "text/csv")
 		wr := csv.NewWriter(w)
-		wr.Write([]string{"name", "url", "hash", "size"})
-		for _, file := range resp.Files {
-			wr.Write([]string{file.Name, file.Url, file.Hash, strconv.FormatInt(file.Size, 10)})
+		if resp.ErrorCode == 0 {
+			wr.Write([]string{"name", "url", "hash", "size"})
+			for _, file := range resp.Files {
+				wr.Write([]string{file.Name, file.Url, file.Hash, strconv.FormatInt(file.Size, 10)})
+			}
+		} else {
+			wr.Write([]string{"error"})
+			wr.Write([]string{resp.Description})
 		}
 		wr.Flush()
 
