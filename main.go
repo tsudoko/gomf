@@ -31,7 +31,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	if hsts {
 		w.Header().Set("Strict-Transport-Security", "max-age=15552000")
 	}
-	if redirectHttps && r.TLS == nil {
+	if redirectHttps && r.TLS == nil && r.Host != "" {
 		targ := &*r.URL
 		targ.Host = r.Host
 		targ.Scheme = "https"
