@@ -153,7 +153,7 @@ func (s *Storage) randomId() string {
 }
 
 func (s *Storage) idToFolder(subfolder, id string) string {
-	for len(id) < 4 {
+	for len(id) < 3 {
 		id = "_" + id
 	}
 	return path.Join(s.Folder, subfolder, id[0:1], id[1:3], id)

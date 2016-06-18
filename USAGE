@@ -54,7 +54,7 @@ Running
 			example: --name Example
 
 		--id-charset CHARSET
-			sets the charset for file IDs in URLs to CHARSET; should only include URL-safe characters and no slashes
+			sets the charset for file IDs in URLs to CHARSET; should only include URL-safe characters and no slashes or underscores
 			example: --id-charset 0123456789
 
 		--id-length LENGTH
