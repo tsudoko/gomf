@@ -5,7 +5,7 @@ Gomf usage
 Requirements
 ------------
 
-	- Go1.5 or newer: https://golang.org/dl/
+	- Go1.6 or newer: https://golang.org/dl/
 
 	- libmagic (on Debian/Ubuntu, `aptitude install libmagic-dev`)
 
