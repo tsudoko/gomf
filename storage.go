@@ -93,7 +93,10 @@ func (s *Storage) Get(id string) (file *os.File, hash string, size int64, modtim
 	if err != nil {
 		return
 	}
-	bhash, _ := base64.RawStdEncoding.DecodeString(path.Base(path.Dir(target)))
+	bhash, err := base64.RawURLEncoding.DecodeString(path.Base(path.Dir(target)))
+	if err != nil {
+		return
+	}
 	hash = hex.EncodeToString(bhash)
 	if path.Ext(fn) != ext {
 		err = ErrNotFound{id + ext}
