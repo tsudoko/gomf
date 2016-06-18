@@ -186,19 +186,10 @@ func (s *Storage) getMimeExt(fpath string, name string) (mimetype, ext string, e
 	// choose file extension, prefer the user-provided one
 	ext = path.Ext(name)
 	exts, err := mime.ExtensionsByType(mimetype)
-	valid := false
 	if err != nil {
 		return
 	}
-	if ext != "" {
-		for _, e := range exts {
-			if e == ext {
-				valid = true
-				break
-			}
-		}
-	}
-	if !valid {
+	if ext != "" && find(exts, ext) == "" {
 		ext = ""
 		if len(exts) > 0 {
 			ext = exts[0]
@@ -209,18 +200,8 @@ func (s *Storage) getMimeExt(fpath string, name string) (mimetype, ext string, e
 	if !ok && s.Whitelist { // whitelist: reject if not on filters
 		err = ErrForbidden{mimetype}
 	} else if ok && !s.Whitelist { // blacklist: reject if filtered
-		forbid := true
 		// only block application/octet-stream if explicitly requested
-		if mimetype == "application/octet-stream" {
-			forbid = false
-			for _, fm := range s.FilterMime {
-				if mimetype == fm {
-					forbid = true
-					break
-				}
-			}
-		}
-		if forbid {
+		if mimetype != "application/octet-stream" || find(s.FilterMime, mimetype) != "" {
 			err = ErrForbidden{filtered}
 		}
 	}
@@ -229,16 +210,12 @@ func (s *Storage) getMimeExt(fpath string, name string) (mimetype, ext string, e
 }
 
 func (s *Storage) findFilter(exts []string, mimetype string) (match string, ok bool) {
-	for _, fm := range s.FilterMime {
-		if mimetype == fm {
-			return mimetype, true
-		}
+	if m := find(s.FilterMime, mimetype); m == mimetype {
+		return m, true
 	}
 	for _, ext := range exts {
-		for _, fe := range s.FilterExt {
-			if ext == "."+fe {
-				return ext, true
-			}
+		if e := find(s.FilterExt, ext); e == ext {
+			return e, true
 		}
 	}
 	return "", false
@@ -290,4 +267,13 @@ func (s *Storage) storeFile(file *os.File, hash, ext string) (id string, err err
 		err = errFileExists
 	}
 	return
+}
+
+func find(ss []string, search string) string {
+	for _, s := range ss {
+		if s == search {
+			return s
+		}
+	}
+	return ""
 }
