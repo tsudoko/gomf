@@ -23,7 +23,7 @@ func initWebsite() {
 	templates = template.Must(template.ParseGlob("pages/*.html"))
 
 	for _, page := range pages {
-		if path.Ext(page.Name()) == ".html" {
+		if path.Ext(page.Name()) == ".html" && page.Name()[0] != '_' {
 			http.HandleFunc("/"+page.Name(), handlePage)
 			if page.Name() == "index.html" {
 				http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -70,9 +70,11 @@ func newContext() pageContext {
 	pages := make(map[string]string)
 	for _, t := range templates.Templates() {
 		n := t.Name()
-		title := n[:len(n)-len(path.Ext(n))]
-		title = strings.ToUpper(title[0:1]) + title[1:]
-		pages[title] = n
+		if n[0] != '_' {
+			title := n[:len(n)-len(path.Ext(n))]
+			title = strings.ToUpper(title[0:1]) + title[1:]
+			pages[title] = n
+		}
 	}
 	return pageContext{
 		SiteName:     siteName,
