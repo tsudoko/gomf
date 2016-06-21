@@ -97,16 +97,16 @@ func main() {
 	}
 
 	if uploadUrl == "" {
-		if *listenHttps != "" {
-			if uploadHost != "" {
+		if uploadHost != "" {
+			if *listenHttps != "" {
 				uploadUrl = "https://" + uploadHost + "/"
-			} else {
-				uploadUrl = "https://" + *listenHttps + "/u/"
-			}
-		} else if *listenHttp != "" {
-			if uploadHost != "" {
+			} else if *listenHttp != "" {
 				uploadUrl = "http://" + uploadHost + "/"
-			} else {
+			}
+		} else {
+			if *listenHttps != "" {
+				uploadUrl = "https://" + *listenHttps + "/u/"
+			} else if *listenHttp != "" {
 				uploadUrl = "http://" + *listenHttp + "/u/"
 			}
 		}
