@@ -36,6 +36,7 @@ func handleFile(w http.ResponseWriter, r *http.Request) {
 	if csp != "" {
 		w.Header().Set("Content-Security-Policy", csp)
 	}
+	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.Header().Set("Last-Modified", modtime.UTC().Format(http.TimeFormat))
 	w.Header().Set("Expires", modtime.UTC().Add(time.Hour*24*30).Format(http.TimeFormat))
 	w.Header().Set("Cache-Control", "max-age=2592000")
