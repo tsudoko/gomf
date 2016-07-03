@@ -31,6 +31,9 @@ func handleFile(w http.ResponseWriter, r *http.Request) {
 	if !allowHtml && (strings.Index(mtype, "text/html") == 0 || strings.Index(mtype, "application/xhtml+xml") == 0) {
 		mtype = "text/plain"
 	}
+	if mtype == "" {
+		mtype = "application/octet-stream"
+	}
 	w.Header().Set("Content-Type", mtype)
 	_ = size
 	if csp != "" {
