@@ -154,10 +154,10 @@ func (s *Storage) randomId() string {
 
 func (s *Storage) idToFolder(subfolder, id string) string {
 	name := id
-	for len(name) < 3 {
+	for len(name) < 4 {
 		name = "_" + name
 	}
-	return path.Join(s.Folder, subfolder, name[0:1], name[1:3], id)
+	return path.Join(s.Folder, subfolder, name[0:2], name[2:4], id)
 }
 
 func (s *Storage) readInput(w io.Writer, r io.Reader) (hash string, size int64, err error) {
