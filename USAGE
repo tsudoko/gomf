@@ -89,8 +89,8 @@ Running
 			sets the abuse email address to EMAIL
 			example: --abuse abuse@example.com
 
-		--upload-host HOST
-			all request to HOST host will serve files directly ($host/$file, while other hosts serve them on $host/u/$file)
+		--upload-host HOSTS
+			all request to hosts in the comma-separated list HOSTS will serve files directly ($host/$file, while other hosts serve them on $host/u/$file)
 			example: --upload-host u.example.com
 
 		--upload-url URL

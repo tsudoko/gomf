@@ -39,11 +39,13 @@ func handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == http.MethodGet || r.Method == http.MethodPost || r.Method == http.MethodHead {
-		if uploadHost != "" && r.Host == uploadHost {
-			handleFile(w, r)
-		} else {
-			http.DefaultServeMux.ServeHTTP(w, r)
+		for _, host := range strings.Split(uploadHost, ",") {
+			if r.Host == host {
+				handleFile(w, r)
+				return
+			}
 		}
+		http.DefaultServeMux.ServeHTTP(w, r)
 	} else {
 		w.Header().Set("Allow", "POST, HEAD, OPTIONS, GET")
 		if r.Method != http.MethodOptions {
@@ -54,7 +56,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	flag.StringVar(&uploadUrl, "upload-url", "", "URL to serve uploads from")
-	flag.StringVar(&uploadHost, "upload-host", "", "host to serve uploads on")
+	flag.StringVar(&uploadHost, "upload-host", "", "comma-separated list of hosts to serve uploads on")
 	flag.StringVar(&siteName, "name", "Gomf", "website name")
 	flag.StringVar(&contactMail, "contact", "contact@example.com", "contact email address")
 	flag.StringVar(&abuseMail, "abuse", "abuse@example.com", "abuse email address")
@@ -98,10 +100,11 @@ func main() {
 
 	if uploadUrl == "" {
 		if uploadHost != "" {
+			host := strings.Split(uploadHost, ",")[0]
 			if *listenHttps != "" {
-				uploadUrl = "https://" + uploadHost + "/"
+				uploadUrl = "https://" + host + "/"
 			} else if *listenHttp != "" {
-				uploadUrl = "http://" + uploadHost + "/"
+				uploadUrl = "http://" + host + "/"
 			}
 		} else {
 			if *listenHttps != "" {
