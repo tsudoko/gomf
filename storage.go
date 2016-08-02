@@ -49,7 +49,7 @@ type ErrNotFound struct{ Name string }
 
 func (e ErrNotFound) Error() string { return "file " + e.Name + " not found" }
 
-func NewStorage(folder string, maxSize int64) *Storage {
+func NewStorage(folder string) *Storage {
 	if err := os.MkdirAll(path.Join(folder, "temp"), 0755); err != nil {
 		panic(err)
 	}
@@ -64,7 +64,7 @@ func NewStorage(folder string, maxSize int64) *Storage {
 		Folder:    folder,
 		IdCharset: DefaultIdCharset,
 		IdLength:  DefaultIdLength,
-		MaxSize:   maxSize,
+		MaxSize:   DefaultMaxSize,
 	}
 }
 
