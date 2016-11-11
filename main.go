@@ -85,6 +85,9 @@ func main() {
 
 	storage = NewStorage("upload")
 	storage.FilterExt = strings.Split(*filterExt, ",")
+	for i := range storage.FilterExt {
+		storage.FilterExt[i] = "." + storage.FilterExt[i]
+	}
 	storage.FilterMime = strings.Split(*filterMime, ",")
 	storage.Whitelist = *whitelist
 	storage.IdLength = *idLength
