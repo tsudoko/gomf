@@ -10,6 +10,8 @@ POST arguments:
 
 GET arguments:
 	output:
+		The output format to use. If not specified, defaults to 'json'.
+
 		gyazo:
 			Content-Type: text/plain
 			Complete URLs to uploaded files in the same order as the input files, separated by newlines. Does not have a trailing newline (Pomf1 compat version).
