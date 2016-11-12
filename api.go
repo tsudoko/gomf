@@ -136,7 +136,7 @@ func respond(w http.ResponseWriter, mode string, resp response) {
 	w.WriteHeader(code)
 
 	switch mode {
-	case "json":
+	case "json", "":
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
 
@@ -169,7 +169,7 @@ func respond(w http.ResponseWriter, mode string, resp response) {
 		}
 		wr.Flush()
 
-	case "", "html":
+	case "html":
 		w.Header().Set("Content-Type", "text/html")
 		context := newContext()
 		context.Result = resp
