@@ -76,6 +76,14 @@ func main() {
 	grill := flag.Bool("grill", false, "enable grills")
 	idLength := flag.Int("id-length", DefaultIdLength, "length of uploaded file IDs")
 	idCharset := flag.String("id-charset", "", "charset for uploaded file IDs (default lowercase letters a-z)")
+	enableLog := flag.Bool("log", false, "enable logging")
+	logIP := flag.Bool("log-ip", false, "log IP addresses")
+	logIPHash := flag.Bool("log-ip-hash", false, "log hashed IP addresses")
+	logUA := flag.Bool("log-ua", false, "log User-Agent headers")
+	logUAHash := flag.Bool("log-ua-hash", false, "log hashed User-Agent headers")
+	logReferer := flag.Bool("log-referer", false, "log Referer headers")
+	logRefererHash := flag.Bool("log-referer-hash", false, "log hashed Referer headers")
+	logHashSalt := flag.String("log-hash-salt", "", "salt to use for hashed log entries")
 
 	flag.Parse()
 
@@ -94,6 +102,18 @@ func main() {
 	storage.MaxSize = *maxSize
 	if *idCharset != "" {
 		storage.IdCharset = *idCharset
+	}
+
+	if !*enableLog {
+		DefaultLogger = nil
+	} else {
+		DefaultLogger.LogIP = *logIP || *logIPHash
+		DefaultLogger.LogUserAgent = *logUA || *logUAHash
+		DefaultLogger.LogReferer = *logReferer || *logRefererHash
+		DefaultLogger.HashIP = *logIPHash
+		DefaultLogger.HashUserAgent = *logUAHash
+		DefaultLogger.HashReferer = *logRefererHash
+		DefaultLogger.HashSalt = *logHashSalt
 	}
 
 	http.HandleFunc("/upload.php", handleUpload)

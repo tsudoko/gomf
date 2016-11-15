@@ -67,7 +67,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	output := r.FormValue("output")
 	resp := response{Files: []result{}}
 
-	if r.Method == http.MethodGet && output == "html" {
+	if r.Method == http.MethodGet && (output == "html" || output == "") {
 		respond(w, output, resp)
 		return
 	}
@@ -113,6 +113,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 			Hash: hex.EncodeToString(bhash),
 			Size: size,
 		}
+		LogUpload(r, res)
 		resp.Files = append(resp.Files, res)
 
 		part.Close()
