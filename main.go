@@ -3,13 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"git.clsr.net/gomf/storage"
 	"math/rand"
 	"net/http"
 	"strings"
 	"time"
 )
 
-var storage *Storage
+var uploads *storage.Storage
 
 var (
 	uploadUrl     string
@@ -69,12 +70,12 @@ func main() {
 	listenHttps := flag.String("https", "", "address to listen on for HTTPS")
 	cert := flag.String("cert", "", "path to TLS certificate (for HTTPS)")
 	key := flag.String("key", "", "path to TLS key (for HTTPS)")
-	maxSize := flag.Int64("max-size", DefaultMaxSize, "max filesize in bytes")
+	maxSize := flag.Int64("max-size", storage.DefaultMaxSize, "max filesize in bytes")
 	filterMime := flag.String("filter-mime", "application/x-dosexec,application/x-msdos-program", "comma-separated list of filtered MIME types")
 	filterExt := flag.String("filter-ext", "exe,dll,msi,scr,com,pif", "comma-separated list of filtered file extensions")
 	whitelist := flag.Bool("whitelist", false, "use filter as a whitelist instead of blacklist")
 	grill := flag.Bool("grill", false, "enable grills")
-	idLength := flag.Int("id-length", DefaultIdLength, "length of uploaded file IDs")
+	idLength := flag.Int("id-length", storage.DefaultIdLength, "length of uploaded file IDs")
 	idCharset := flag.String("id-charset", "", "charset for uploaded file IDs (default lowercase letters a-z)")
 	enableLog := flag.Bool("log", false, "enable logging")
 	logIP := flag.Bool("log-ip", false, "log IP addresses")
@@ -91,17 +92,17 @@ func main() {
 
 	initWebsite()
 
-	storage = NewStorage("upload")
-	storage.FilterExt = strings.Split(*filterExt, ",")
-	for i := range storage.FilterExt {
-		storage.FilterExt[i] = "." + storage.FilterExt[i]
+	uploads = storage.NewStorage("upload")
+	uploads.FilterExt = strings.Split(*filterExt, ",")
+	for i := range uploads.FilterExt {
+		uploads.FilterExt[i] = "." + uploads.FilterExt[i]
 	}
-	storage.FilterMime = strings.Split(*filterMime, ",")
-	storage.Whitelist = *whitelist
-	storage.IdLength = *idLength
-	storage.MaxSize = *maxSize
+	uploads.FilterMime = strings.Split(*filterMime, ",")
+	uploads.Whitelist = *whitelist
+	uploads.IdLength = *idLength
+	uploads.MaxSize = *maxSize
 	if *idCharset != "" {
-		storage.IdCharset = *idCharset
+		uploads.IdCharset = *idCharset
 	}
 
 	if !*enableLog {

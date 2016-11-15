@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"git.clsr.net/gomf/storage"
 	"io"
 	"mime"
 	"net/http"
@@ -17,9 +18,9 @@ import (
 )
 
 func handleFile(w http.ResponseWriter, r *http.Request) {
-	f, hash, size, modtime, err := storage.Get(strings.TrimLeft(r.URL.Path, "/"))
+	f, hash, size, modtime, err := uploads.Get(strings.TrimLeft(r.URL.Path, "/"))
 	if err != nil {
-		if _, ok := err.(ErrNotFound); ok {
+		if _, ok := err.(storage.ErrNotFound); ok {
 			http.Error(w, err.Error(), http.StatusNotFound)
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -94,13 +95,13 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		id, hash, size, err := storage.New(part, part.FileName())
+		id, hash, size, err := uploads.New(part, part.FileName())
 		if err != nil {
 			resp.ErrorCode = http.StatusInternalServerError
 			resp.Description = err.Error()
-			if _, ok := err.(ErrTooLarge); ok {
+			if _, ok := err.(storage.ErrTooLarge); ok {
 				resp.ErrorCode = http.StatusRequestEntityTooLarge
-			} else if _, ok := err.(ErrForbidden); ok {
+			} else if _, ok := err.(storage.ErrForbidden); ok {
 				resp.ErrorCode = http.StatusForbidden
 			}
 			break

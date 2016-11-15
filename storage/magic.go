@@ -1,4 +1,4 @@
-package main
+package storage
 
 // #cgo LDFLAGS: -lmagic
 // #include <stdlib.h>

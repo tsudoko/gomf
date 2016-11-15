@@ -80,8 +80,8 @@ func newContext() pageContext {
 		SiteName:     siteName,
 		Abuse:        abuseMail,
 		Contact:      contactMail,
-		MaxSizeBytes: storage.MaxSize,
-		MaxSize:      humanize(storage.MaxSize),
+		MaxSizeBytes: uploads.MaxSize,
+		MaxSize:      humanize(uploads.MaxSize),
 		Pages:        pages,
 	}
 }
