@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"sync"
 	"time"
 )
@@ -22,6 +23,7 @@ type Logger struct {
 	HashUserAgent bool
 	HashReferer   bool
 	HashSalt      string
+	ProxyCount    int
 	logFile       *os.File
 	encoder       *json.Encoder
 	lastDate      string
@@ -52,6 +54,19 @@ func (l *Logger) Log(entry LogEntry) {
 
 func (l *Logger) LogUpload(req *http.Request, res result) {
 	host, _, _ := net.SplitHostPort(req.RemoteAddr)
+	if l.ProxyCount > 0 {
+		ffs := strings.Split(req.Header.Get("X-Forwarded-For"), ",")
+		if len(ffs) < l.ProxyCount {
+			ri := req.Header.Get("X-Real-IP")
+			if ri != "" {
+				host = ri
+			} else if len(ffs) > 0 {
+				host = ffs[len(ffs)-1]
+			}
+		} else {
+			host = ffs[len(ffs)-l.ProxyCount]
+		}
+	}
 	l.logUpload(
 		host,               // ip
 		req.UserAgent(),    // userAgent

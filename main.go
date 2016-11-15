@@ -85,6 +85,7 @@ func main() {
 	logReferer := flag.Bool("log-referer", false, "log Referer headers")
 	logRefererHash := flag.Bool("log-referer-hash", false, "log hashed Referer headers")
 	logHashSalt := flag.String("log-hash-salt", "", "salt to use for hashed log entries")
+	proxyCount := flag.Int("proxy-count", 0, "count of trusted reverse proxies")
 
 	flag.Parse()
 
@@ -115,6 +116,7 @@ func main() {
 		DefaultLogger.HashUserAgent = *logUAHash
 		DefaultLogger.HashReferer = *logRefererHash
 		DefaultLogger.HashSalt = *logHashSalt
+		DefaultLogger.ProxyCount = *proxyCount
 	}
 
 	http.HandleFunc("/upload.php", handleUpload)
