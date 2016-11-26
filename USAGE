@@ -113,3 +113,36 @@ Running
 		--grill
 			enables grills
 			example: --grill
+
+		--log
+			enables logging of uploads
+			example: --log --log-hash-salt 'somerandomsaltstringhere' --log-ip-hash --log-ua --log-referer --proxy-count 1
+
+		--log-hash-salt SALT
+			salt to use for hashed log entries
+			if missing, no salt is used when hashing
+
+		--log-ip
+			enables logging of uploaders' IP addresses
+
+		--log-ip-hash
+			enables logging of hashes of uploaders' IP addresses
+			used for privacy in order to avoid logging raw IP addresses while permitting comparison with other hashed entries
+
+		--log-ua
+			enables logging of uploaders' User-Agent headers
+
+		--log-ua-hash
+			enables logging of hashes of uploaders' User-Agent headers
+			used for privacy in order to avoid logging raw user-agents while permitting comparison with other hashed entries
+
+		--log-referer
+			enables logging of uploaders' Referer headers
+
+		--log-referer-hash
+			enables logging of hashes of uploaders' Referer headers
+			used for privacy in order to avoid logging raw referers while permitting comparison with other hashed entries
+
+		--proxy-count COUNT
+			the count of trusted reverse proxies (e.g. nginx) for logging IP addresses
+			when set to a positive number N, takes the N-th most recent entry in X-Forwarded-For as the uploader's IP address for logging
