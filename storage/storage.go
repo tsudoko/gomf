@@ -49,6 +49,29 @@ type ErrNotFound struct{ Name string }
 
 func (e ErrNotFound) Error() string { return "file " + e.Name + " not found" }
 
+func moveFile(src, dest string) error {
+	if err := os.Rename(src, dest); err == nil {
+		return nil
+	}
+
+	in, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	out, err := os.Create(dest)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	if _, err := io.Copy(out, in); err != nil {
+		return err
+	}
+	return out.Sync()
+}
+
 func NewStorage(folder string) *Storage {
 	if err := os.MkdirAll(path.Join(folder, "temp"), 0755); err != nil {
 		panic(err)
@@ -235,7 +258,7 @@ func (s *Storage) storeFile(file *os.File, hash, ext string) (id string, err err
 		}
 		fexists = true
 	} else {
-		err = os.Rename(file.Name(), hpath)
+		err = moveFile(file.Name(), hpath)
 		os.Chmod(hpath, 0644)
 	}
 	if err != nil {
