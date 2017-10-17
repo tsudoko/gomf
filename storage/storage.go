@@ -184,17 +184,11 @@ func (s *Storage) getMimeExt(fpath string, name string) (mimetype, ext string, e
 		return
 	}
 
-	// choose file extension, prefer the user-provided one
 	ext = path.Ext(name)
+
 	exts, err := mime.ExtensionsByType(mimetype)
 	if err != nil {
 		return
-	}
-	if !contains(exts, ext) {
-		ext = ""
-		if len(exts) > 0 {
-			ext = exts[0]
-		}
 	}
 
 	filtered, ok := s.findFilter(exts, mimetype)
