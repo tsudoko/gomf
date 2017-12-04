@@ -10,12 +10,22 @@ import (
 	"io"
 	"mime"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"strconv"
 	"strings"
 	"time"
 )
+
+func asciiOnly(str string) string {
+	return strings.Map(func(r rune) rune {
+		if r >= 127 {
+			return -1
+		}
+		return r
+	}, str)
+}
 
 func handleFile(w http.ResponseWriter, r *http.Request) {
 	f, hash, size, modtime, err := uploads.Get(strings.TrimLeft(r.URL.Path, "/"))
@@ -28,6 +38,8 @@ func handleFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer f.Close()
+
+	name := path.Base(f.Name())
 	mtype := mime.TypeByExtension(path.Ext(f.Name()))
 	if !allowHtml && (strings.Index(mtype, "text/html") == 0 || strings.Index(mtype, "application/xhtml+xml") == 0) {
 		mtype = "text/plain"
@@ -44,6 +56,8 @@ func handleFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Last-Modified", modtime.UTC().Format(http.TimeFormat))
 	w.Header().Set("Expires", time.Now().UTC().Add(time.Hour*24*30).Format(http.TimeFormat))
 	w.Header().Set("Cache-Control", "max-age=2592000")
+	// in theory you should make the filename ascii-only, but curl/wget don't support extended fields yet
+	w.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=\"%s\"; filename*=UTF-8''%s", strings.Replace(name, "\"", "\\\"", -1), url.QueryEscape(name)))
 	w.Header().Set("ETag", "\"sha1:"+hash+"\"")
 	//io.Copy(w, f)
 	http.ServeContent(w, r, "", modtime, f)

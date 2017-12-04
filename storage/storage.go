@@ -130,11 +130,11 @@ func (s *Storage) New(r io.Reader, name string) (id, hash string, size int64, er
 	if err != nil {
 		return
 	}
-	_, ext, err := s.getMimeExt(temp.Name(), name)
+	_, _, err = s.getMimeExt(temp.Name(), name)
 	if err != nil {
 		return
 	}
-	id, err = s.storeFile(temp, hash, ext)
+	id, err = s.storeFile(temp, hash, name)
 	if err == nil {
 		temp = nil // prevent deletion
 	} else if err == errFileExists {
@@ -222,10 +222,11 @@ func (s *Storage) findFilter(exts []string, mimetype string) (match string, ok b
 	return "", false
 }
 
-func (s *Storage) storeFile(file *os.File, hash, ext string) (id string, err error) {
+func (s *Storage) storeFile(file *os.File, hash, name string) (id string, err error) {
 	hfolder := s.idToFolder("files", hash)
 	hpath := path.Join(hfolder, "file")
 	fexists := false
+	ext := path.Ext(name)
 
 	os.MkdirAll(path.Dir(hfolder), 0755)
 	err = os.Mkdir(hfolder, 0755)
@@ -249,7 +250,7 @@ func (s *Storage) storeFile(file *os.File, hash, ext string) (id string, err err
 		os.MkdirAll(path.Dir(dir), 0755)
 		err = os.Mkdir(dir, 0755)
 		if err == nil {
-			fpath = path.Join(dir, "file"+ext)
+			fpath = path.Join(dir, name)
 			id += ext
 			break
 		}
